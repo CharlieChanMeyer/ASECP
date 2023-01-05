@@ -27,9 +27,7 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-<<<<<<< HEAD:app/src/main/java/com/thesis/asecp/Login.kt
 
-=======
         emailText = findViewById(R.id.emailInput)
         passwordText = findViewById(R.id.editTextTextPassword)
 
@@ -48,7 +46,6 @@ class Login : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
->>>>>>> 341021869b9b69527b0941172ba4d1dac6c27b32:app/src/main/java/com/thesis/asecp/login.kt
     }
 
     private fun postVolley(email: String, password: String) {

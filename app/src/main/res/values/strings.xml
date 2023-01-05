@@ -2,4 +2,5 @@
     <string name="app_name">ASECP</string>
     <string name="enter_email">Enter email</string>
     <string name="enter_password">Enter password</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic3V1c3NoaWkiLCJhIjoiY2xjaXI1ODU5N2ZrNTNwcG4ycTkzYWFrdCJ9.FSNmA2exRCYuPtoIuhQfpg</string>
 </resources>

@@ -6,4 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".Map">
 
+    <Button
+        android:id="@+id/menuMapView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.999" />
+
+    <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:mapbox_cameraTargetLat="40.7128"
+        app:mapbox_cameraTargetLng="-74.0060"
+        app:mapbox_cameraZoom="9.0">
+
+    </com.mapbox.maps.MapView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

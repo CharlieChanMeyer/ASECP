@@ -1,6 +1,7 @@
 package com.thesis.asecp
 
 import android.app.Application
+import java.security.Permission
 
 class GlobalVariables: Application() {
     companion object {
@@ -15,5 +16,9 @@ class GlobalVariables: Application() {
         var globalUserApiKEY = ""
 
         var globalUserEmail = ""
+
+        var globalLangAPP = "jp"
+
+        const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
     }
 }

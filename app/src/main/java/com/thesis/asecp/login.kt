@@ -27,6 +27,7 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+
         emailText = findViewById(R.id.emailInput)
         passwordText = findViewById(R.id.editTextTextPassword)
 

@@ -9,6 +9,7 @@ import com.thesis.asecp.R
 class Menu : AppCompatActivity() {
 
     lateinit var mapButton: Button
+    private lateinit var randomButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +21,14 @@ class Menu : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        randomButton = findViewById(R.id.randomButton)
+
+        randomButton.setOnClickListener {
+            var intent = Intent(this, RandomRestaurant::class.java)
+            startActivity(intent)
+            finish()
+        }
+
     }
 }
 

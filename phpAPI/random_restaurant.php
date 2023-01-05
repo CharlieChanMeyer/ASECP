@@ -32,7 +32,7 @@ if (!empty($_POST["pos"])){
     $pos = $_POST["pos"];
     $pos = explode(",", $pos);
     $result = array();
-    $close_restaurtants = array();
+    $close_restaurants = array();
 
     if ($con) {
         $sql1 = "SELECT * FROM restaurants";
@@ -41,12 +41,12 @@ if (!empty($_POST["pos"])){
             $size = mysqli_num_rows($res1);
             for ($x = 0; $x < $size ; $x++) {
                 if (distanceInKmBetweenEarthCoordinates($pos[0], $pos[1], $res1[$x][5][0], $res1[$x][5][1]) < 2) {
-                    array_push($close_restaurtants, $res[$x]);
+                    array_push($close_restaurants, $res[$x]);
                 }
             } 
-            if ($close_restaurtants != 0) {
-                $close_restaurtants_size = count($close_restaurtants);
-                $rand = rand(0, $close_restaurtants_size);
+            if ($close_restaurants != 0) {
+                $close_restaurants_size = count($close_restaurants);
+                $rand = rand(0, $close_restaurants_size);
                 $result = array(
                     "status" => "success",
                     "message" => "Data fetched successfully",

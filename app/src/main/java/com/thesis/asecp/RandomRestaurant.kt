@@ -20,6 +20,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.provider.Settings
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -61,13 +62,21 @@ class RandomRestaurant : AppCompatActivity() {
             finish()
         }
 
-        getCurrentLocation()
+        var location = getCurrentLocation()
 
-        //postVolley()
+        if (location == null){
+            Toast.makeText(this,"Can't get location", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            postVolley(location)
+        }
+
 
     }
 
-    private fun getCurrentLocation() {
+    private fun getCurrentLocation():Location? {
+        var funlocation:Location? = null
+        var check = 0
         if (checkPermissions()){
             if (isLocationEnabled()){
                 if (ActivityCompat.checkSelfPermission(
@@ -79,7 +88,6 @@ class RandomRestaurant : AppCompatActivity() {
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermission()
-                    return
                 }
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
                     val location: Location? = task.result
@@ -88,8 +96,9 @@ class RandomRestaurant : AppCompatActivity() {
                     }
                     else{
                         Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
-                        tvLatitude.text = ""+location.latitude
-                        tvLongitude.text = ""+location.longitude
+                        tvLatitude.text = location.latitude.toString()
+                        tvLongitude.text = location.longitude.toString()
+                        funlocation = location
                     }
                 }
             }
@@ -103,6 +112,7 @@ class RandomRestaurant : AppCompatActivity() {
         else{
             requestPermission()
         }
+        return(funlocation)
     }
 
     private fun isLocationEnabled(): Boolean{
@@ -148,19 +158,20 @@ class RandomRestaurant : AppCompatActivity() {
         }
     }
 
-
-
-    private fun postVolley(){
+    private fun postVolley(location: Location){
         val queue = Volley.newRequestQueue(this)
         val url = globalVars.globalAPILink+"random_restaurant.php"
 
-        val requestBody = "pos "
+        var tmp = location.latitude.toString() + "," + location.longitude.toString()
+
+        val requestBody = "pos=$tmp"
         val stringReq : StringRequest =
             @SuppressLint("UseCompatLoadingForDrawables")
             object : StringRequest(
                 Method.POST, url,
                 Response.Listener { response ->
                     // response
+                    Log.e("response", response.toString())
                     var strResp = response.split(",", "|").toMutableList()
                     if ("success" in strResp) {
                         var nbRestaurant = (strResp.size)/4 - 1

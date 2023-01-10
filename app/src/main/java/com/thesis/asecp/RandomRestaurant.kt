@@ -57,13 +57,15 @@ class RandomRestaurant : AppCompatActivity() {
             finish()
         }
 
-        //var location = getCurrentLocation()
-        var location = Location(LocationManager.GPS_PROVIDER)
-        location.latitude = 34.546472
-        location.longitude = 135.506644
+        var location = getCurrentLocation()
+
 
         if (location == null){
-            Toast.makeText(this,"Can't get location", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"Can't get location, default location at I-Wing", Toast.LENGTH_SHORT).show()
+
+            location = Location(LocationManager.GPS_PROVIDER)
+            location.latitude = 34.546472
+            location.longitude = 135.506644
         }
         else{
             postVolley(location)

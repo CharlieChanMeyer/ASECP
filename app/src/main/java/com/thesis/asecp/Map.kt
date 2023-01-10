@@ -1,7 +1,12 @@
 package com.thesis.asecp
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,34 +14,36 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
+import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
-import com.mapbox.maps.plugin.gestures.OnMoveListener
-import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.gestures.*
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
-import java.lang.ref.WeakReference
-import android.view.ViewGroup
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.mapbox.maps.*
-import com.mapbox.maps.plugin.gestures.*
 import com.thesis.asecp.databinding.ItemCalloutViewBinding
+import java.lang.ref.WeakReference
 import java.nio.charset.Charset
+import java.util.*
 
 
 class Map : AppCompatActivity() {
 
     private lateinit var locationPermissionHelper: LocationPermissionHelper
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private lateinit var geocoder: Geocoder
 
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
@@ -86,15 +93,51 @@ class Map : AppCompatActivity() {
             finish()
         }
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        geocoder = Geocoder(this, Locale.getDefault())
         mapView = findViewById(R.id.mapView)
         viewAnnotationManager = mapView.viewAnnotationManager
 
         setAnnotations()
 
-        locationPermissionHelper = LocationPermissionHelper(WeakReference(this))
-        locationPermissionHelper.checkPermissions {
-            onMapReady()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermission()
         }
+        var lastLoc = fusedLocationProviderClient.lastLocation
+
+        lastLoc.addOnSuccessListener {
+            val address = geocoder.getFromLocation(it.latitude,it.longitude,1)
+            val countryCode = address[0].countryCode
+
+            if (countryCode == "JP") {
+                onMapReady()
+            } else {
+                val initialCameraOptions = CameraOptions.Builder()
+                    .center(Point.fromLngLat(135.506644, 34.546472))
+                    .pitch(45.0)
+                    .zoom(15.5)
+                    .bearing(-17.6)
+                    .build()
+                mapView.getMapboxMap().setCamera(initialCameraOptions)
+            }
+        }
+        lastLoc.addOnFailureListener{
+            val initialCameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(135.506644, 34.546472))
+                .pitch(45.0)
+                .zoom(15.5)
+                .bearing(-17.6)
+                .build()
+            mapView.getMapboxMap().setCamera(initialCameraOptions)
+        }
+
     }
 
     private fun onMapReady() {
@@ -109,6 +152,13 @@ class Map : AppCompatActivity() {
             initLocationComponent()
             setupGesturesListener()
         }
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+            GlobalVariables.PERMISSION_REQUEST_ACCESS_LOCATION
+        )
     }
 
     private fun setupGesturesListener() {
@@ -147,7 +197,6 @@ class Map : AppCompatActivity() {
     }
 
     private fun onCameraTrackingDismissed() {
-        Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
         mapView.location
             .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.location
@@ -183,10 +232,8 @@ class Map : AppCompatActivity() {
                 Method.POST, url,
                 Response.Listener { response ->
                     var arrayResponse = response.split("|")
-                    Log.e("DEBUG",arrayResponse.toString())
                     if (arrayResponse[0] == "success") {
                         arrayResponse = arrayResponse.drop(1)
-                        Log.e("DEBUG",arrayResponse.toString())
                         for (restaurant in arrayResponse) {
                             var tmp = restaurant.split("/")
                             var id = tmp[0].toInt()
@@ -233,4 +280,16 @@ class Map : AppCompatActivity() {
         }
     }
 
+
+//    @SuppressLint("SetTextI18n")
+//    private fun addUserNoLocation(GPS:Point) {
+//        val viewAnnotation = viewAnnotationManager.addViewAnnotation(
+//            resId = ,
+//            options = viewAnnotationOptions {
+//                geometry(GPS)
+//                allowOverlap(true)
+//            }
+//        )
+//        viewAnnotationViews.add(viewAnnotation)
+//    }
 }

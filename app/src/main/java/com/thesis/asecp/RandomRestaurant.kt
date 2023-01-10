@@ -5,9 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.widget.*
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -17,13 +15,10 @@ import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import java.nio.charset.Charset
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.provider.Settings
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.thesis.asecp.GlobalVariables.Companion.PERMISSION_REQUEST_ACCESS_LOCATION
@@ -33,15 +28,15 @@ class RandomRestaurant : AppCompatActivity() {
 
     private lateinit var randomButton: Button
     lateinit var restaurantDescriptionText: TextView
-    lateinit var restaurantImage: ImageView
     private lateinit var locationManager: LocationManager
     private var globalVars = GlobalVariables.Companion
     private val locationPermissionCode = 2
     private lateinit var tvGpsLocation: TextView
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var tvLatitude: TextView
-    private lateinit var tvLongitude: TextView
+    private lateinit var restaurant_name: TextView
+    private lateinit var restaurant_grade: TextView
     private lateinit var menuButton: Button
+    private lateinit var restaurantImage: ImageView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,20 +44,23 @@ class RandomRestaurant : AppCompatActivity() {
         setContentView(R.layout.activity_random_restaurant)
 
         //randomButton = findViewById(R.id.button)
-        //restaurantDescriptionText = findViewById(R.id.textView)
-        //restaurantImage = findViewById(R.id.imageView)
+        restaurantDescriptionText = findViewById(R.id.restaurantDescriptionText)
+        restaurantImage = findViewById(R.id.restaurantImage)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        tvLatitude = findViewById(R.id.tv_latitude)
-        tvLongitude = findViewById(R.id.tv_longitude)
-
+        restaurant_grade = findViewById(R.id.restaurant_grade)
+        restaurant_name = findViewById(R.id.restaurant_name)
         menuButton = findViewById(R.id.menuRandomView)
+
         menuButton.setOnClickListener {
             var intent = Intent(this, Menu::class.java)
             startActivity(intent)
             finish()
         }
 
-        var location = getCurrentLocation()
+        //var location = getCurrentLocation()
+        var location = Location(LocationManager.GPS_PROVIDER)
+        location.latitude = 34.546472
+        location.longitude = 135.506644
 
         if (location == null){
             Toast.makeText(this,"Can't get location", Toast.LENGTH_SHORT).show()
@@ -70,8 +68,6 @@ class RandomRestaurant : AppCompatActivity() {
         else{
             postVolley(location)
         }
-
-
     }
 
     private fun getCurrentLocation():Location? {
@@ -96,8 +92,8 @@ class RandomRestaurant : AppCompatActivity() {
                     }
                     else{
                         Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
-                        tvLatitude.text = location.latitude.toString()
-                        tvLongitude.text = location.longitude.toString()
+                        //restaurant_name.text = location.latitude.toString()
+                        //restaurant_grade.text = location.longitude.toString()
                         funlocation = location
                     }
                 }
@@ -171,34 +167,27 @@ class RandomRestaurant : AppCompatActivity() {
                 Method.POST, url,
                 Response.Listener { response ->
                     // response
-                    Log.e("response", response.toString())
+
                     var strResp = response.split(",", "|").toMutableList()
-                    if ("success" in strResp) {
-                        var nbRestaurant = (strResp.size)/4 - 1
-                        strResp.removeAt(0)
-                        strResp.removeAt(0)
-                        for (i in 0..nbRestaurant) {
-                            val tableRow = TableRow(this)
-                            val tViewName = TextView(this)
-                            var tViewDate = TextView(this)
-                            strResp.removeAt(0)
-                            var tmp = strResp[0].split("/")
-                            if (globalVars.globalLangAPP == "jp") {
-                                tViewName.text = tmp[0]
-                            } else {
-                                tViewName.text = tmp[1]
-                            }
-                            tViewName.setTextColor(Color.parseColor("#000000"))
-                            tViewName.gravity = Gravity.CENTER;
-                            tableRow.addView(tViewName);
-                            strResp.removeAt(0)
-                            strResp.removeAt(0)
-                            tViewDate.text = strResp[0]
-                            tViewDate.setTextColor(Color.parseColor("#000000"))
-                            tViewDate.gravity = Gravity.CENTER;
-                            tableRow.addView(tViewDate);
-                            strResp.removeAt(0)
-                        }
+                    if ("success" in strResp[0]) {
+
+                        val restaurantId = strResp[8].split(": ")[1].replace("\"", "")
+
+                        var intent = Intent(this, RestaurantPresentation::class.java)
+                        startActivity(intent)
+                        finish()
+
+                       /* val urlPhoto = strResp[7].split("\"")[3]
+                        val description = strResp[5].split(": ")[1].replace("\"", "")
+                        val restaurantName = strResp[2].split(": ")[1].replace("\"", "")
+                        val restaurantGrade = strResp[6].split(": ")[1].replace("\"", "")
+
+                        Glide.with(this).load(globalVars.globalAPILink+"uploads/"+urlPhoto).into(restaurantImage)
+                        restaurantDescriptionText.text = description
+                        restaurant_name.text = restaurantName
+                        restaurant_grade.text = "Grade : "+restaurantGrade+"/5"*/
+
+
                     } else {
                         Toast.makeText(this, strResp[1], Toast.LENGTH_SHORT).show()
                     }

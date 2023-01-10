@@ -55,6 +55,7 @@ if (!empty($_POST["pos"])){
                     "description" => $row['description'],
                     "grade" => $row['grade'],
                     "photo" => $row['photo'],
+                    "id" => $row['id']
     
                 );
             } else $result = array("status" => "failed", "message" => "No close restaurants");

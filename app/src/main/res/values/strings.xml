@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ASECP</string>
+    <string name="app_name">Mapamozu</string>
 
 <!--    Login and Register-->
     <string name="enter_email">Enter email</string>

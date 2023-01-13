@@ -57,8 +57,6 @@ class RandomRestaurant : AppCompatActivity() {
 
         //If the location comes back null then the default position is the I-Wing position
         if (location == null){
-            Toast.makeText(this,"Can't get location, default location at I-Wing", Toast.LENGTH_SHORT).show()
-
             location = Location(LocationManager.GPS_PROVIDER)
             location.latitude = 34.546472
             location.longitude = 135.506644
@@ -88,11 +86,7 @@ class RandomRestaurant : AppCompatActivity() {
                 // Gets last locations of user
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
                     val location: Location? = task.result
-                    if(location == null){
-                        // Display Null Received if location could not be obtained
-                        Toast.makeText(this,"Null Received",Toast.LENGTH_SHORT).show()
-                    }
-                    else{
+                    if(location != null){
                         // Display Get Success if location could be obtained
                         Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
                         funlocation = location
@@ -184,9 +178,7 @@ class RandomRestaurant : AppCompatActivity() {
                     //Checks if the response has a success message
                     if ("success" in strResp[0]) {
                         //Restaurant Id is positioned at the 8th place inside the response array
-                        Log.e("Response",strResp.toString())
-                        val restaurantId = strResp[8].split(": ")[1].replace("\"", "").toInt()
-
+                        val restaurantId = strResp[8].split(": ")[1].replace("\"", "").replace("}","").trimIndent().toInt()
                         //Set the globalVariable globalRestaurantID to the restaurant's current ID
                         // for other activities to have access to it
                         globalVars.globalRestaurantID = restaurantId

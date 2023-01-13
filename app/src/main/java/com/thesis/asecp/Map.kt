@@ -346,9 +346,16 @@ class Map : AppCompatActivity() {
             }
             //add a onClickListener to the selectButton to send the user to the presentation page of the restaurant
             selectButton.setOnClickListener {
-                Toast.makeText(this@Map, id.toString(), Toast.LENGTH_SHORT).show()
+                showRestaurant(id)
             }
         }
+    }
+
+    private fun showRestaurant(id: Int) {
+        globalVars.globalRestaurantID = id
+        var intent = Intent(this,RestaurantPresentation::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

@@ -25,5 +25,5 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "ASECP"
+rootProject.name = "Mapamozu"
 include ':app'

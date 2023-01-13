@@ -25,8 +25,6 @@ function distanceInKmBetweenEarthCoordinates(float $lat1, float $lon1, float $la
     return ($earthRadiusKm * $c);
 }
 
-    
-
 if (!empty($_POST["pos"])){
     $con = mysqli_connect("thesis-database.cmdyp0pvnymo.ap-northeast-3.rds.amazonaws.com:3306", "antoine", "CMI7EU7T1erahBm3", "asecp");
     $pos = $_POST["pos"];
@@ -34,20 +32,21 @@ if (!empty($_POST["pos"])){
     $result = array();
     $close_restaurants = array();
 
-
     if ($con) {
         $sql1 = "SELECT * FROM restaurants";
         $res1 =  mysqli_query($con, $sql1);
-        if ($res1 != 0){
-            $size = mysqli_num_rows($res1);
-            for ($x = 0; $x < $size ; $x++) {
-                if (distanceInKmBetweenEarthCoordinates($pos[0], $pos[1], $res1[$x][5][0], $res1[$x][5][1]) < 2) {
-                    array_push($close_restaurants, $res[$x]);
+        if (mysqli_num_rows($res1) != 0) {
+            while ($row = mysqli_fetch_array($res1, MYSQLI_ASSOC))
+            {
+                $coord = explode(", ",$row["GPS"]);
+                if (distanceInKmBetweenEarthCoordinates($pos[0], $pos[1], $coord[0], $coord[1]) < 2) {
+                    array_push($close_restaurants, $row);
                 }
-            } 
+            }
             if ($close_restaurants != 0) {
                 $close_restaurants_size = count($close_restaurants);
-                $rand = rand(0, $close_restaurants_size);
+                $rand = rand(0, $close_restaurants_size-1);
+                $row = $close_restaurants[$rand];
                 $result = array(
                     "status" => "success",
                     "message" => "Data fetched successfully",
@@ -57,7 +56,6 @@ if (!empty($_POST["pos"])){
                     "grade" => $row['grade'],
                     "photo" => $row['photo'],
                     "id" => $row['id']
-
     
                 );
             } else $result = array("status" => "failed", "message" => "No close restaurants");

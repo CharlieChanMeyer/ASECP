@@ -26,40 +26,33 @@ import com.thesis.asecp.GlobalVariables.Companion.PERMISSION_REQUEST_ACCESS_LOCA
 class RandomRestaurant : AppCompatActivity() {
     //create the buttons in the class variable
 
-    private lateinit var randomButton: Button
-    lateinit var restaurantDescriptionText: TextView
-    private lateinit var locationManager: LocationManager
+    //globalVars allows us to get access to the global variables shared by all activities
     private var globalVars = GlobalVariables.Companion
-    private val locationPermissionCode = 2
-    private lateinit var tvGpsLocation: TextView
+
+    //Variable type to call location functions
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var restaurant_name: TextView
-    private lateinit var restaurant_grade: TextView
+
+    //Menu Button to return to Menu
     private lateinit var menuButton: Button
-    private lateinit var restaurantImage: ImageView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_random_restaurant)
 
-        //randomButton = findViewById(R.id.button)
-        restaurantDescriptionText = findViewById(R.id.restaurantDescriptionText)
-        restaurantImage = findViewById(R.id.restaurantImage)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        restaurant_grade = findViewById(R.id.restaurant_grade)
-        restaurant_name = findViewById(R.id.restaurant_name)
-        menuButton = findViewById(R.id.menuRandomView)
 
+        //Section to return to Menu with button press
         menuButton.setOnClickListener {
             var intent = Intent(this, Menu::class.java)
             startActivity(intent)
             finish()
         }
 
+
+        //Function to get User location
         var location = getCurrentLocation()
 
-
+        //If the location comes back null then the default position is the I-Wing position
         if (location == null){
             Toast.makeText(this,"Can't get location, default location at I-Wing", Toast.LENGTH_SHORT).show()
 
@@ -67,15 +60,17 @@ class RandomRestaurant : AppCompatActivity() {
             location.latitude = 34.546472
             location.longitude = 135.506644
         }
-        else{
-            postVolley(location)
-        }
+
+        //Function to get PHP/server response with input location
+        postVolley(location)
     }
 
+    //Function to get Current Location
     private fun getCurrentLocation():Location? {
         var funlocation:Location? = null
-        var check = 0
+        //Check if the App has permissions to access Location
         if (checkPermissions()){
+            //Check if the location is enabled on the device
             if (isLocationEnabled()){
                 if (ActivityCompat.checkSelfPermission(
                         this,
@@ -87,15 +82,16 @@ class RandomRestaurant : AppCompatActivity() {
                 ) {
                     requestPermission()
                 }
+                // Gets last locations of user
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
                     val location: Location? = task.result
                     if(location == null){
+                        // Display Null Received if location could not be obtained
                         Toast.makeText(this,"Null Received",Toast.LENGTH_SHORT).show()
                     }
                     else{
+                        // Display Get Success if location could be obtained
                         Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
-                        //restaurant_name.text = location.latitude.toString()
-                        //restaurant_grade.text = location.longitude.toString()
                         funlocation = location
                     }
                 }
@@ -113,6 +109,7 @@ class RandomRestaurant : AppCompatActivity() {
         return(funlocation)
     }
 
+    //Check if Location is Enabled
     private fun isLocationEnabled(): Boolean{
         val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -121,6 +118,7 @@ class RandomRestaurant : AppCompatActivity() {
                 )
     }
 
+    //Requests Permissions to get Coarse and Fine location of the user
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
             this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
@@ -128,6 +126,7 @@ class RandomRestaurant : AppCompatActivity() {
         )
     }
 
+    //Checks if user has permissions to access Coarse and Fine location
     private fun checkPermissions(): Boolean{
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
             &&
@@ -138,6 +137,7 @@ class RandomRestaurant : AppCompatActivity() {
         return false
     }
 
+    //If the Permissions are given then the activity restarts if not a message pops up and says Denied
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -148,6 +148,7 @@ class RandomRestaurant : AppCompatActivity() {
         if(requestCode == PERMISSION_REQUEST_ACCESS_LOCATION){
             if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(applicationContext, "Granted", Toast.LENGTH_SHORT).show()
+                //Once we have Permissions call back getCurrentLocation function
                 getCurrentLocation()
             }
             else{
@@ -156,12 +157,18 @@ class RandomRestaurant : AppCompatActivity() {
         }
     }
 
+    //This function makes a request to the server to get the information of a random restaurant
+    // by calling the PHP files at the given url.
+    //This functions then sends that information to the RestaurantPresentation activity
     private fun postVolley(location: Location){
         val queue = Volley.newRequestQueue(this)
+        // URL where the PHP is located
         val url = globalVars.globalAPILink+"random_restaurant.php"
 
+        //Setting up input variable
         var tmp = location.latitude.toString() + "," + location.longitude.toString()
 
+        //We must make sure the name given in input must match the name inside the SQL database
         val requestBody = "pos=$tmp"
         val stringReq : StringRequest =
             @SuppressLint("UseCompatLoadingForDrawables")
@@ -171,29 +178,27 @@ class RandomRestaurant : AppCompatActivity() {
                     // response
 
                     var strResp = response.split(",", "|").toMutableList()
+                    //Checks if the response has a success message
                     if ("success" in strResp[0]) {
+                        //Restaurant Id is positioned at the 8th place inside the response array
+                        val restaurantId = strResp[8].split(": ")[1].replace("\"", "").toInt()
 
-                        val restaurantId = strResp[8].split(": ")[1].replace("\"", "")
+                        //Set the globalVariable globalRestaurantID to the restaurant's current ID
+                        // for other activities to have access to it
+                        globalVars.globalRestaurantID = restaurantId
 
+                        //Start the RestaurantPresentation activity
                         var intent = Intent(this, RestaurantPresentation::class.java)
                         startActivity(intent)
                         finish()
 
-                       /* val urlPhoto = strResp[7].split("\"")[3]
-                        val description = strResp[5].split(": ")[1].replace("\"", "")
-                        val restaurantName = strResp[2].split(": ")[1].replace("\"", "")
-                        val restaurantGrade = strResp[6].split(": ")[1].replace("\"", "")
-
-                        Glide.with(this).load(globalVars.globalAPILink+"uploads/"+urlPhoto).into(restaurantImage)
-                        restaurantDescriptionText.text = description
-                        restaurant_name.text = restaurantName
-                        restaurant_grade.text = "Grade : "+restaurantGrade+"/5"*/
-
-
-                    } else {
+                    }
+                    // If the response contains a failure message we display the attached message
+                    else {
                         Toast.makeText(this, strResp[1], Toast.LENGTH_SHORT).show()
                     }
                 },
+                // If we cannot get a response we display the error message
                 Response.ErrorListener { error ->
                     var strError = error.toString()
                     Toast.makeText(this, strError, Toast.LENGTH_SHORT).show()

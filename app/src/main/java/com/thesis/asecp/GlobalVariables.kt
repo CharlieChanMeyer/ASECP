@@ -19,6 +19,8 @@ class GlobalVariables: Application() {
 
         var globalLangAPP = "jp"
 
+        var globalRestaurantID = -1
+
         const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
     }
 }

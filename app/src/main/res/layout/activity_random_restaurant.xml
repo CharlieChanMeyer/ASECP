@@ -21,11 +21,12 @@
 <!--        app:layout_constraintTop_toTopOf="parent"-->
 <!--        app:layout_constraintVertical_bias="0.775" />-->
 
+<!--
     <ImageView
         android:id="@+id/restaurantImage"
         android:layout_width="342dp"
         android:layout_height="340dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +81,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.783" />
+-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

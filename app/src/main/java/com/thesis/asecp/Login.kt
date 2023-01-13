@@ -13,11 +13,11 @@ import java.nio.charset.Charset
 
 class Login : AppCompatActivity() {
     //email input variable
-    lateinit var emailText: EditText
+    private lateinit var emailText: EditText
     //password input variable
-    lateinit var passwordText: EditText
+    private lateinit var passwordText: EditText
     //error display variable
-    lateinit var errorText: TextView
+    private lateinit var errorText: TextView
 
     //get value of global var
     private var globalVars = GlobalVariables.Companion
@@ -31,11 +31,8 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-<<<<<<< HEAD:app/src/main/java/com/thesis/asecp/login.kt
         //link the input variable to the actual inputs in the view
-=======
 
->>>>>>> origin/random_restaurant:app/src/main/java/com/thesis/asecp/Login.kt
         emailText = findViewById(R.id.emailInput)
         passwordText = findViewById(R.id.editTextTextPassword)
         //link the error display variable to the actual display

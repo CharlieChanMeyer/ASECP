@@ -21,7 +21,8 @@ class Menu : AppCompatActivity() {
     private var globalVars = GlobalVariables.Companion
     //random button variable
     private lateinit var randomButton: Button
-
+    //map button variable
+    lateinit var mapButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //Save Instance state, and link the activity to the menu layout
@@ -35,8 +36,17 @@ class Menu : AppCompatActivity() {
             logout()
         }
 
+        //Link the button to the view object
+        mapButton = findViewById(R.id.mapButton)
+        //On click on map, create the Map intent, start it and finish the menu intent
+        mapButton.setOnClickListener {
+            var intent = Intent(this,com.thesis.asecp.Map::class.java)
+            startActivity(intent)
+            finish()
+        }
+        //Link the button to the view object
         randomButton = findViewById(R.id.randomButton)
-
+        //On click on random restaurant, create the random restaurant intent, start it and finish the menu intent
         randomButton.setOnClickListener {
             var intent = Intent(this, RandomRestaurant::class.java)
             startActivity(intent)

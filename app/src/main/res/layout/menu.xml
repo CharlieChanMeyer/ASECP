@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Menu">
 
+
     <Button
         android:id="@+id/logout"
         android:layout_width="wrap_content"
@@ -15,17 +16,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.814" />
+        app:layout_constraintVertical_bias="0.792" />
+
+    <Button
+        android:id="@+id/mapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
+        android:text="Map"
+        app:layout_constraintBottom_toTopOf="@+id/randomButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/randomButton"
-        android:layout_width="165dp"
-        android:layout_height="62dp"
+        android:layout_width="166dp"
+        android:layout_height="71dp"
         android:layout_marginBottom="44dp"
-        android:text="Random Restaurant"
+        android:text="random Restaurant"
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

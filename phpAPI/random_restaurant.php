@@ -34,6 +34,7 @@ if (!empty($_POST["pos"])){
     $result = array();
     $close_restaurants = array();
 
+
     if ($con) {
         $sql1 = "SELECT * FROM restaurants";
         $res1 =  mysqli_query($con, $sql1);
@@ -56,6 +57,7 @@ if (!empty($_POST["pos"])){
                     "grade" => $row['grade'],
                     "photo" => $row['photo'],
                     "id" => $row['id']
+
     
                 );
             } else $result = array("status" => "failed", "message" => "No close restaurants");

@@ -40,8 +40,11 @@ class RandomRestaurant : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_random_restaurant)
 
+        //Link the fused location variable to the Location Services from the phone
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         //Section to return to Menu with button press
+        menuButton = findViewById(R.id.menuRandomView)
         menuButton.setOnClickListener {
             var intent = Intent(this, Menu::class.java)
             startActivity(intent)
@@ -131,7 +134,7 @@ class RandomRestaurant : AppCompatActivity() {
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
             &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            {
+        {
             return true
         }
         return false
@@ -181,6 +184,7 @@ class RandomRestaurant : AppCompatActivity() {
                     //Checks if the response has a success message
                     if ("success" in strResp[0]) {
                         //Restaurant Id is positioned at the 8th place inside the response array
+                        Log.e("Response",strResp.toString())
                         val restaurantId = strResp[8].split(": ")[1].replace("\"", "").toInt()
 
                         //Set the globalVariable globalRestaurantID to the restaurant's current ID

@@ -2,7 +2,6 @@ package com.thesis.asecp
 
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.nfc.Tag
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +19,9 @@ class Menu : AppCompatActivity() {
 
     //get value of global var
     private var globalVars = GlobalVariables.Companion
+    //random button variable
+    private lateinit var randomButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //Save Instance state, and link the activity to the menu layout
@@ -29,10 +31,17 @@ class Menu : AppCompatActivity() {
         //Link the button to the view object
         logoutButton = findViewById(R.id.logout)
         //On click on logout, call the logout function
-        logoutButton.setOnClickListener{
+        logoutButton.setOnClickListener {
             logout()
         }
 
+        randomButton = findViewById(R.id.randomButton)
+
+        randomButton.setOnClickListener {
+            var intent = Intent(this, RandomRestaurant::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     //Logout function that logout a user
@@ -59,7 +68,7 @@ class Menu : AppCompatActivity() {
                         var intent = Intent(this, Login::class.java)
                         startActivity(intent)
                         finish()
-                    //Else, log the response
+                        //Else, log the response
                     } else {
                         Log.e(TAG,response)
                     }

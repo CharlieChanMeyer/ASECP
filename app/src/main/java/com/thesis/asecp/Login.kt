@@ -31,7 +31,11 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+<<<<<<< HEAD:app/src/main/java/com/thesis/asecp/login.kt
         //link the input variable to the actual inputs in the view
+=======
+
+>>>>>>> origin/random_restaurant:app/src/main/java/com/thesis/asecp/Login.kt
         emailText = findViewById(R.id.emailInput)
         passwordText = findViewById(R.id.editTextTextPassword)
         //link the error display variable to the actual display

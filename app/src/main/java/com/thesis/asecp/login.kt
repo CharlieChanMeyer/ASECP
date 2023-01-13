@@ -3,6 +3,7 @@ package com.thesis.asecp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -41,6 +42,7 @@ class Login : AppCompatActivity() {
         }
 
         buttonRegister.setOnClickListener {
+            Log.e("Test","Message")
             var intent = Intent(this, Register::class.java)
             startActivity(intent)
             finish()

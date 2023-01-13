@@ -20,5 +20,6 @@ class GlobalVariables: Application() {
         var globalRestaurantID = -1
 
         const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
+        const val PERMISSION_REQUEST_READ_FOLDERS = 1
     }
 }

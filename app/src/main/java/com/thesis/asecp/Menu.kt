@@ -23,6 +23,8 @@ class Menu : AppCompatActivity() {
     private lateinit var randomButton: Button
     //map button variable
     lateinit var mapButton: Button
+    //add restaurant button variable
+    lateinit var buttonAddRest: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //Save Instance state, and link the activity to the menu layout
@@ -34,6 +36,15 @@ class Menu : AppCompatActivity() {
         //On click on logout, call the logout function
         logoutButton.setOnClickListener {
             logout()
+        }
+
+        buttonAddRest = findViewById(R.id.addRestButton)
+
+        buttonAddRest.setOnClickListener {
+            Log.e("Test", "Message")
+            var intent = Intent(this, AddRestaurant::class.java)
+            startActivity(intent)
+            finish()
         }
 
         //Link the button to the view object
@@ -96,6 +107,7 @@ class Menu : AppCompatActivity() {
         //Add the string request in the queue
         queue.add(stringReq)
     }
+
 }
 
 

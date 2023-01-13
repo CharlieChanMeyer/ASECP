@@ -87,15 +87,37 @@ class AddRestaurant : AppCompatActivity() {
 
         /*-----------     Find location of the phone      ------------------*/
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        var location = getCurrentLocation() //get the current location of the phone
-        if (location == null){ //the location of the phone isn't available
-            Toast.makeText(this,"Can't get location, please enter the location manually", Toast.LENGTH_SHORT).show()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationPermission()
         }
-        else{
-            /*The localization of the phone is success, so we directly fill in the GPS location box
-            In this way, the user doesn't need to fill in this box*/
-            longitudeInput.setText(location.longitude.toString())
-            latitudeInput.setText(location.latitude.toString())
+        var location = fusedLocationProviderClient.lastLocation //get the current location of the phone
+        //Add a OnSuccessListerner to the lastLoc variable
+        location.addOnSuccessListener {
+            if (it == null){ //the location of the phone isn't available
+                longitudeInput.setText("135.506644")
+                latitudeInput.setText("34.546472")
+                Toast.makeText(this,"Can't get location, location set to Nakamozu campus", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                /*The localization of the phone is success, so we directly fill in the GPS location box
+                In this way, the user doesn't need to fill in this box*/
+                longitudeInput.setText(it.longitude.toString())
+                latitudeInput.setText(it.latitude.toString())
+            }
+        }
+        //If the phone don't have any localisation sensor
+        // set the camera location to Nakamozu campus with a zoom of 15.5, a pitch of 45 and a bearing of -17.6
+        location.addOnFailureListener{
+            longitudeInput.setText("135.506644")
+            latitudeInput.setText("34.546472")
+            Toast.makeText(this,"Can't get location, location set to Nakamozu campus", Toast.LENGTH_SHORT).show()
         }
 
         /*-----------     Description of the restaurant      ------------------*/
@@ -115,54 +137,6 @@ class AddRestaurant : AppCompatActivity() {
             upload()
         }
 
-    }
-
-    /*get current location of the phone*/
-    private fun getCurrentLocation(): Location? {
-        var funlocation:Location? = null
-        if (checkLocationPermissions()){
-            if (isLocationEnabled()){
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestLocationPermission()
-                }
-                fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
-                    val location: Location? = task.result
-                    if(location == null){
-                        Toast.makeText(this,"Null Received",Toast.LENGTH_SHORT).show()
-                    }
-                    else{
-                        Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
-                        funlocation = location
-                    }
-                }
-            }
-            else{
-                //settings open here
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_SHORT).show()
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            }
-        }
-        else{
-            requestLocationPermission()
-        }
-        return(funlocation)
-    }
-
-    //check if the location of the phone is granted
-    private fun isLocationEnabled(): Boolean{
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-                )
     }
 
 /*-----------     Request the permission to get phone's location      ------------------
@@ -261,7 +235,7 @@ fun encodeBitmapImage(uri: Uri): String? {
 private fun upload(){
     //data to upload
     val name = nameInput.text.toString() //restaurant's name
-    val grade = gradeInput.toString() //restaurant's rate
+    val grade = gradeInput.rating.toString() //restaurant's rate
     val gps = longitudeInput.text.toString()+", "+latitudeInput.text.toString() //restaurant's location
     val description = descriptionInput.text.toString() //restaurant's description
 
@@ -272,10 +246,13 @@ private fun upload(){
             object : StringRequest(
                 Method.POST, postURL,
                 Response.Listener { response ->
-                    Log.d(TAG,response)
                     if (response.toString() == "success") {
                         Toast.makeText(this,"upload successfully",Toast.LENGTH_SHORT).show()
+                        var intent = Intent(this,Menu::class.java)
+                        startActivity(intent)
+                        finish()
                     } else {
+                        Log.e(TAG,response.toString())
                         Toast.makeText(this,response,Toast.LENGTH_SHORT).show()
                     }
                 },
@@ -286,13 +263,13 @@ private fun upload(){
                 //To send everything at once, we group all the data into a hashmap.
                 override fun getParams(): MutableMap<String, String>? {
                     var map = HashMap<String, String>()
-                    map.put("name",name)
-                    map.put("grade",grade)
-                    map.put("description",description)
+                    map["name"] = name
+                    map["grade"] = grade
+                    map["description"] = description
                     if (encodeImageString != null) {
-                        map.put("photo", encodeImageString)
+                        map["photo"] = encodeImageString
                     }
-                    map.put("gps",gps)
+                    map["gps"] = gps
                     return map
                 }
             }

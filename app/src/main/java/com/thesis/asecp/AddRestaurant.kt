@@ -236,7 +236,7 @@ private fun upload(){
     //data to upload
     val name = nameInput.text.toString() //restaurant's name
     val grade = gradeInput.rating.toString() //restaurant's rate
-    val gps = longitudeInput.text.toString()+", "+latitudeInput.text.toString() //restaurant's location
+    val gps = latitudeInput.text.toString()+", "+longitudeInput.text.toString() //restaurant's location
     val description = descriptionInput.text.toString() //restaurant's description
 
     val encodeImageString=encodeBitmapImage(imageUri)

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -60,7 +61,7 @@ class RestaurantPresentation : AppCompatActivity() {
         }
 
         //Request the information of restaurant from sever
-        postVolley(globalVars.globalRestaurantId)
+        postVolley(globalVars.globalRestaurantID)
 
     }
 
@@ -121,6 +122,7 @@ class RestaurantPresentation : AppCompatActivity() {
                     return requestBody.toByteArray(Charset.defaultCharset())
                 }
             }
+        Log.e("Test Body",stringReq.body.decodeToString())
         queue.add(stringReq)
     }
 }

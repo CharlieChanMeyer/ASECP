@@ -221,7 +221,7 @@ fun encodeBitmapImage(uri: Uri): String? {
     var encodeImageString: String = "xxx"
     if(bitmap!=null) {
         var outPutStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outPutStream) //compress the picture in PNG format
+        bitmap.compress(Bitmap.CompressFormat.PNG, 75, outPutStream) //compress the picture in PNG format
         var byteofimage = outPutStream.toByteArray()
         encodeImageString = Base64.encodeToString(byteofimage, Base64.DEFAULT) //encode the picture
     }
@@ -273,6 +273,7 @@ private fun upload(){
                     return map
                 }
             }
+        Log.e("Test Body",request.body.decodeToString())
         queue.add(request)
     }
 }

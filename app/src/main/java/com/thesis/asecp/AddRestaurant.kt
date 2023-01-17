@@ -246,7 +246,7 @@ private fun upload(){
             object : StringRequest(
                 Method.POST, postURL,
                 Response.Listener { response ->
-                    if (response.toString() == "success") {
+                    if (response.toString().contains("Image : success | BDD : Success")) {
                         Toast.makeText(this,"upload successfully",Toast.LENGTH_SHORT).show()
                         var intent = Intent(this,Menu::class.java)
                         startActivity(intent)

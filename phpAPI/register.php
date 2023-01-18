@@ -1,6 +1,7 @@
 <?php
 if (!empty($_POST['email']) && !empty($_POST['password'])) {
     $con = mysqli_connect("thesis-database.cmdyp0pvnymo.ap-northeast-3.rds.amazonaws.com:3306", "root", "J58myKHNAAihjSX", "asecp");
+    $name = $_POST["name"];
     $email = $_POST["email"];
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
     if ($con) {

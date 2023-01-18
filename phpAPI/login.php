@@ -1,6 +1,4 @@
 <?php
-$_POST['email'] = "root";
-$_POST['password'] = "1234";
 if (!empty($_POST['email']) && !empty($_POST['password'])) {
     $con = mysqli_connect("thesis-database.cmdyp0pvnymo.ap-northeast-3.rds.amazonaws.com:3306", "root", "J58myKHNAAihjSX", "asecp");
     $email = $_POST["email"];
@@ -33,4 +31,4 @@ if (!empty($_POST['email']) && !empty($_POST['password'])) {
     } else $result = array("status" => "failed", "message" => "Database connection failed");
 } else $result = array("status" => "failed", "message" => "All fields are required");
 
-echo json_encode($result, JSON_PRETTY_PRINT); 
+echo json_encode($result, JSON_PRETTY_PRINT);
